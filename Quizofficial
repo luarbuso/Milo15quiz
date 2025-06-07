@@ -8,21 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <!-- 
-        Chosen Palette: Warm Neutrals with Green/Red Accents
-    -->
-    <!-- 
-        Application Structure Plan: The application is structured as an interactive dashboard to gamify the experience. It starts with a motivational message and clear rules. The core is a visual progress tracker showing 'Yes'/'No' counts and a progress bar towards the winning goal of 12 'Yes' votes. This is more engaging than a static list. Invitations are presented as interactive cards in a responsive grid. This structure was chosen to make the challenge feel like a fun, dynamic game, providing immediate visual feedback and encouraging participation to reach the goal. A final "win" modal provides a clear, celebratory conclusion.
-    -->
-    <!-- 
-        Visualization & Content Choices: 
-        - Report Info: 'Yes' vs. 'No' counts & progress to 12. Goal: Show progress. Viz: Custom HTML/CSS progress bar and large number counters. Interaction: Dynamically updated via JS on button clicks. Justification: A full chart library is overkill; a custom progress bar is lightweight, visually clear, and effectively gamifies the core goal.
-        - Report Info: List of 16 invitations. Goal: Organize and prompt action. Presentation: Interactive cards with 'Yes'/'No' buttons. Interaction: Clicking a button updates the state, provides visual feedback on the card (color change), and disables it. Justification: Cards are a user-friendly, modern UI pattern for discrete items, and buttons provide a clear call-to-action, making the interaction intuitive.
-        - Report Info: Winning state. Goal: Reward and conclude. Presentation: A celebratory full-screen modal. Interaction: Appears automatically upon reaching 12 'Yes' votes. Justification: A modal is a standard and effective way to deliver a high-impact message that grabs the user's full attention.
-    -->
-    <!-- 
-        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. 
-    -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -51,29 +36,52 @@
         .win-modal {
             transition: opacity 0.3s ease-in-out;
         }
+        .gemini-message {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #4CAF50; /* Green for positive messages */
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .gemini-message.show {
+            opacity: 1;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #333;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="antialiased">
 
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-7xl">
 
-        <!-- Header -->
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-black text-gray-800 mb-2">Hey Milo, Happy Birthday!</h1>
             <p class="max-w-3xl mx-auto text-lg text-gray-600">
-                Today, we're doing something special to celebrate you. We want to bring back the Milo who used to say 'yes' to everything, the Milo who always jumped into new adventures and explored the world around him. Saying 'yes' is a powerful way to say 'yes' to life itself, and we're so excited to start this journey with you.
+                Today, we're doing something special to celebrate you. We want to **surprise you bringing a lot excitement into your life**. We want you to say **YES! YES! YES!** to many fun activities. Saying 'yes' is a powerful way to say 'yes' to life itself, and we're so excited to start this journey with you.
             </p>
         </header>
 
-        <!-- Rules -->
         <div class="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-gray-200">
             <h2 class="text-2xl font-bold text-gray-800 mb-3">How the 'Yes' Challenge Works</h2>
             <p class="text-gray-600">
-                Here's the deal: We'll be giving you invitations for fun, healthy activities. When you hear an invitation, you'll have a few seconds to decide: a clear <strong>'Yes!'</strong> means you commit to the activity and you'll get a cool gift right away! But if you say <strong>'No'</strong> (or hesitate, or avoid answering), you'll get to try a super spicy lollipop. It's all in good fun, and we're just here to help you rediscover how much awesome stuff there is to say 'yes' to beyond the screens. <strong>And when you get 12 'Yes!' responses, you win the game and get an even bigger, special gift!</strong>
+                Here's the deal: We'll be giving you invitations for fun, healthy activities. When you hear an invitation, you'll have a few seconds to decide: a clear <strong>'Yes!'</strong> means you commit to the activity and you'll get a cool gift right away! But if you say <strong>'No'</strong> (or hesitate, or avoid answering), you'll get to try a super spicy lollipop. It's all in good fun, and we're just here to help you rediscover how much awesome stuff there is to say 'yes' to beyond the screens. <strong>And when you get 15 'Yes!' responses, you win the game and get an even bigger, special gift!</strong>
             </p>
         </div>
 
-        <!-- Progress Tracker -->
         <div class="bg-white rounded-2xl shadow-lg p-6 mb-10 sticky top-4 z-10 border border-gray-200">
             <h3 class="text-xl font-bold text-center mb-4">Your Progress</h3>
             <div class="flex justify-around items-center mb-4 text-center">
@@ -88,25 +96,22 @@
             </div>
             <div class="w-full bg-gray-200 rounded-full h-6">
                 <div id="progress-bar" class="progress-bar-fill bg-green-500 h-6 rounded-full text-center text-white font-bold text-sm flex items-center justify-center" style="width: 0%;">
-                    0/12
+                    0/15
                 </div>
             </div>
         </div>
 
 
-        <!-- Invitations Grid -->
-        <div id="invitations-grid" class="grid grid-cols-1 gap-6">
-            <!-- Cards will be injected here by JS -->
-        </div>
+        <div id="invitations-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
 
     </div>
 
-    <!-- Win Modal -->
     <div id="win-modal" class="win-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
         <div class="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-md w-full transform scale-95 transition-transform duration-300">
             <h2 class="text-5xl font-black text-green-500 mb-4">YOU WON!</h2>
             <p class="text-xl text-gray-700 mb-2">Congratulations, Milo!</p>
-            <p class="text-lg text-gray-600 mb-6">You got 12 'Yes' votes and have officially won the Birthday Challenge! You've earned the special grand prize!</p>
+            <p class="text-lg text-gray-600 mb-6">You got 15 'Yes' votes and have officially won the Birthday Challenge! You've earned the special grand prize!</p>
             <button id="close-modal-btn" class="bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors">Awesome!</button>
         </div>
     </div>
@@ -115,22 +120,25 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const invitations = [
-                { date: "June 10, 2025", text: "We'll go watch the movie 'John Wick: Ballerina' at the cinema this evening." },
-                { date: "June 11, 2025", text: "Let's head to the library and check out some new graphic novels or interesting books." },
-                { date: "June 12, 2025", text: "Dad will take you to the gym for a quick workout session." },
-                { date: "June 13, 2025", text: "Mom wants to go for a 15-minute run in the park with you." },
-                { date: "June 23, 2025", text: "Get your hands dirty by helping dad plant new flowers." },
-                { date: "June 15, 2025", text: "How about a quick game of basketball outside?" },
-                { date: "June 16, 2025", text: "Let's try cooking that pasta carbonara that you like so much for dinner tonight." },
-                { date: "June 25, 2025", text: "Dance outside on the balcony for 5 minutes so the neighbors watch you!" },
-                { date: "June 18, 2025", text: "Let's go for a short bike ride around Minneberg." },
-                { date: "June 19, 2025", text: "How about we put our phones away for an hour and play a board game together?" },
-                { date: "June 20, 2025", text: "Go to the gym with Zack and workout your chest muscles." },
-                { date: "June 21, 2025", text: "Have a relaxing sauna hour." },
-                { date: "June 22, 2025", text: "A running competition with your dad to see who is the fastest." },
-                { date: "June 14, 2025", text: "The weather's perfect! Let's go jump from the jetty into the lake/ocean." },
-                { date: "June 24, 2025", text: "Bring a friend (Elliot, Samuel, or anyone you want!) together with Dad to Stikki Nikki for some ice cream." },
-                { date: "June 17, 2025", text: "Fancy helping me wash the car today? We can put on some music!" },
+                { date: "June 7, 2025", text: "We'll go watch the movie 'John Wick: Ballerina' at the cinema this evening." },
+                { date: "June 7, 2025", text: "Let's head to the library and check out some new graphic novels or interesting books." },
+                { date: "June 7, 2025", text: "Dad will take you to the gym for a quick workout session." },
+                { date: "June 7, 2025", text: "Mom wants to go for a 15-minute run in the park with you." },
+                { date: "June 7, 2025", text: "Get your hands dirty by helping dad plant new flowers." },
+                { date: "June 7, 2025", text: "How about a quick game of basketball outside?" },
+                { date: "June 7, 2025", text: "Let's try cooking that pasta carbonara that you like so much for dinner tonight." },
+                { date: "June 7, 2025", text: "Dance outside on the balcony for 5 minutes so the neighbors watch you!" },
+                { date: "June 7, 2025", text: "Let's go for a short bike ride around Minneberg." },
+                { date: "June 7, 2025", text: "How about we put our phones away for an hour and play a board game together?" },
+                { date: "June 7, 2025", text: "Go to the gym with Zack and workout your chest muscles." },
+                { date: "June 7, 2025", text: "Have a relaxing sauna hour." },
+                { date: "June 7, 2025", text: "A running competition with your dad to see who is the fastest." },
+                { date: "June 7, 2025", text: "The weather's perfect! Let's go jump from the jetty into the lake/ocean." },
+                { date: "June 7, 2025", text: "Bring a friend (Elliot, Samuel, or anyone you want!) together with Dad to Stikki Nikki for some ice cream." },
+                { date: "June 7, 2025", text: "Fancy helping me wash the car today? We can put on some music!" }, 
+                { date: "June 7, 2025", text: "We are going to a gaming center now" }, // Updated
+                { date: "June 7, 2025", text: "We are going to Odenplan for a surprise" }, // Updated
+                { date: "June 7, 2025", text: "Beating mom in a digital game" } // Updated
             ];
 
             const grid = document.getElementById('invitations-grid');
@@ -142,7 +150,8 @@
             
             let yesCount = 0;
             let noCount = 0;
-            const goal = 12;
+            const goal = 15; 
+            const apiKey = ""; // API key will be provided by Canvas runtime.
 
             const updateProgress = () => {
                 yesCountEl.textContent = yesCount;
@@ -164,23 +173,62 @@
                 winModal.querySelector('div').classList.add('scale-95');
             });
 
+            // Function to generate a positive reinforcement message using Gemini API
+            async function generatePositiveMessage(activityText, messageElement) {
+                messageElement.textContent = "Generating encouragement...";
+                messageElement.classList.add('show');
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `Generate a very short, enthusiastic, encouraging message (max 10 words) celebrating a teenage boy's choice to say YES to a healthy activity: '${activityText}'. For example, if the activity is 'go for a run', the message could be 'Awesome! Feel that energy!', or 'Great choice, strength is building!'. Do not include any introductory phrases. Just the message.` }] });
+                    const payload = { contents: chatHistory };
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        messageElement.textContent = text;
+                    } else {
+                        messageElement.textContent = "Well done! Keep it up!";
+                    }
+                } catch (error) {
+                    console.error("Error generating positive message:", error);
+                    messageElement.textContent = "Fantastic choice!";
+                } finally {
+                    setTimeout(() => {
+                        messageElement.classList.remove('show');
+                        messageElement.textContent = '';
+                    }, 5000); // Message disappears after 5 seconds
+                }
+            }
+
+
             invitations.forEach((inv, index) => {
                 const card = document.createElement('div');
-                card.className = 'challenge-card bg-white rounded-2xl shadow-md p-6 flex flex-col justify-between border border-gray-200 mb-6'; /* Added mb-6 here */
+                card.className = 'challenge-card bg-white rounded-2xl shadow-md p-6 flex flex-col justify-between border border-gray-200 mb-6'; 
                 
                 card.innerHTML = `
                     <div>
-                        <p class="text-sm font-semibold text-gray-500 mb-2">${inv.date}</p>
-                        <p class="text-lg font-semibold text-gray-800">${inv.text}</p>
+                        <p class="text-sm font-semibold text-gray-500 mb-2" data-date="${inv.date}">${inv.date}</p>
+                        <p class="text-lg font-semibold text-gray-800 mb-4" data-text="${inv.text}">${inv.text}</p>
                     </div>
-                    <div class="mt-6 flex gap-3">
+                    <div class="mt-auto flex gap-3">
                         <button class="yes-btn w-full bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600">YES! 👍</button>
                         <button class="no-btn w-full bg-red-500 text-white font-bold py-3 rounded-lg hover:bg-red-600">NO 🌶️</button>
                     </div>
+                    <p class="gemini-message" id="message-${index}"></p>
                 `;
 
                 const yesBtn = card.querySelector('.yes-btn');
                 const noBtn = card.querySelector('.no-btn');
+                const invitationDateEl = card.querySelector('[data-date]');
+                const invitationTextEl = card.querySelector('[data-text]');
+                const messageElement = card.querySelector(`#message-${index}`);
 
                 yesBtn.addEventListener('click', () => {
                     yesCount++;
@@ -188,6 +236,7 @@
                     card.classList.add('card-disabled', 'border-green-500', 'border-2');
                     yesBtn.disabled = true;
                     noBtn.disabled = true;
+                    generatePositiveMessage(invitationTextEl.textContent, messageElement);
                 });
 
                 noBtn.addEventListener('click', () => {
